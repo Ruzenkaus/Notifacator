@@ -1,3 +1,4 @@
+import smtplib
 import tkinter
 import customtkinter
 import database as db
@@ -66,7 +67,7 @@ class AppNot(customtkinter.CTk):
     def load_third_frame(self, email):
         self.Frame2.destroy()
 
-        plans = db.get_all_planes(email)
+        plans = db.get_all_planes_with_this_email(email)
         print(plans)
         self.Frame3 = customtkinter.CTkFrame(self)
         self.Frame3.pack()
@@ -77,7 +78,7 @@ class AppNot(customtkinter.CTk):
             label = customtkinter.CTkLabel(self.Frame3,text=f'{p[1]}')
             label.pack()
             plans_m.append(label)
-
+        # there can be a button near to label for delete plan
 
         self.e_p = customtkinter.CTkEntry(self.Frame3)
         self.e_p.pack()
@@ -91,6 +92,18 @@ class AppNot(customtkinter.CTk):
             self.load_third_frame(email)
         else:
             CTkMessagebox.CTkMessagebox(title='Warining', message='incorrect plane!')
+
+    def delete_plane(self, plane:str):
+        db.delete_plan(plane)
+
+
+    def sending_emails(self):
+        emails = db.get_all_planes_with_this_email()
+        sender = "any_sender"
+        smptObj = smtplib.SMTP('localhost')
+        for e in emails:
+            planes = db.get_all_planes_with_this_email(e[1])
+            smptObj.sendmail(sender, e[1], f'You got planes to do! {planes}')
 
 
 

@@ -1,6 +1,5 @@
 import sqlite3
-
-
+import smtplib, ssl
 
 def add_data(data:tuple):
     conn = sqlite3.connect('users.db')
@@ -45,7 +44,7 @@ def add_plan(email, plane):
     conn.commit()
 
 
-def get_all_planes(email):
+def get_all_planes_with_this_email(email)->list:
     conn = sqlite3.connect('plans.db')
     cur = conn.cursor()
 
@@ -53,8 +52,21 @@ def get_all_planes(email):
 
     return result
 
+def get_all_emails()->list:
+    conn = sqlite3.connect('plans.db')
+    cur = conn.cursor()
+
+    result = cur.execute(f"SELECT * from plans").fetchall()
+
+    return result
 
 
+def delete_plan(plan:str):
+    conn = sqlite3.connect('plans.db')
+    cur = conn.cursor()
+    cur.execute(f"DELETE FROM plans WHERE Planes = '{plan}'")
+
+    conn.commit()
 
 
 
